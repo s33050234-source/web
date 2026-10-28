@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h1>資訊三乙 潘祥恩</h1>
+<p>Here, a JavaScript changes the value of the src (source) attribute of an image.</p>
+
+<script>
+var blinkTimer = null;
+var On = false;
+
+function light(sw) {
+  stopBlink();
+  var pic;
+  if (sw == 0) {
+    pic = "pic_bulboff.gif";
+  } else {
+    pic = "pic_bulbon.gif";
+  }
+  document.getElementById('myImage').src = pic;
+}
+function startBlink() {
+  if (blinkTimer !== null) {
+    return;
+  }
+  blinkTimer = setInterval(function() {
+    On = !On;
+    if (On) {
+      document.getElementById('myImage').src = "pic_bulbon.gif";
+    } else {
+      document.getElementById('myImage').src = "pic_bulboff.gif";
+    }
+  }, 500);
+}
+function stopBlink() {
+  if (blinkTimer !== null) {
+    clearInterval(blinkTimer);
+    blinkTimer = null;
+  }
+}
+</script>
+<img id="myImage" src="pic_bulboff.gif" width="100" height="180">
+<p>
+  <button type="button" onclick="light(1)">Light On</button>
+  <button type="button" onclick="light(0)">Light Off</button>
+  <button type="button" onclick="startBlink()">爆閃</button>
+  <button type="button" onclick="stopBlink()">停止閃爍</button>
+</p>
+</body>
+</html>
