@@ -1,0 +1,196 @@
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>飲料訂購系統 - 50%找奶茶系列</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7f6;
+            padding: 20px;
+        }
+        .order-card {
+            max-width: 500px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        .notice {
+            background-color: #fff3cd;
+            color: #856404;
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"], input[type="tel"], input[type="number"], select {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .result-box {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="order-card">
+    <h2>🥤資三乙潘祥恩 50%找奶茶系列訂購單</h2>
+    <div class="notice">
+        📢 提示：訂購金額滿 250 元以上即可外送！請務必留下聯絡方式。
+    </div>
+
+    <form id="drinkForm">
+        <!-- 顧客資訊 -->
+        <div class="form-group">
+            <label for="userName">訂購人姓名：</label>
+            <input type="text" id="userName" required placeholder="請輸入姓名">
+        </div>
+        <div class="form-group">
+            <label for="userPhone">聯絡電話：</label>
+            <input type="tel" id="userPhone" required placeholder="請輸入電話">
+        </div>
+
+        <!-- 品項選擇 -->
+        <div class="form-group">
+            <label for="drinkSelect">品項：</label>
+            <select id="drinkSelect">
+                <option value="奶茶">1.奶茶 (M:50/L:60)</option>
+                <option value="奶綠">2.奶綠 (M:50/L:60)</option>
+                <option value="紅茶瑪奇朵">3.紅茶瑪奇朵 (M:50/L:60)</option>
+                <option value="烏龍瑪奇朵">4.烏龍瑪奇朵 (M:50/L:60)</option>
+                <option value="四季奶青">5.四季奶青 (M:50/L:60)</option>
+                <option value="黃金烏龍奶茶">6.黃金烏龍奶茶 (M:50/L:60)</option>
+                <option value="阿華田">7.阿華田 (M:55/L:65)</option>
+                <option value="牢大冰紅茶">8.牢大冰紅茶 (M:24/L:80)</option>
+            </select>
+        </div>
+
+        <!-- 容量選擇 -->
+        <div class="form-group">
+            <label for="sizeSelect">容量：</label>
+            <select id="sizeSelect">
+                <option value="M">中杯 (M)</option>
+                <option value="L">大杯 (L)</option>
+            </select>
+        </div>
+
+        <!-- 甜度選擇 -->
+        <div class="form-group">
+            <label for="sugarSelect">甜度：</label>
+            <select id="sugarSelect">
+                <option value="正常">正常</option>
+                <option value="9分">9分</option>
+                <option value="少糖">少糖</option>
+                <option value="半糖">半糖</option>
+                <option value="微糖">微糖</option>
+                <option value="無糖">無糖</option>
+            </select>
+        </div>
+
+        <!-- 冰塊選擇 -->
+        <div class="form-group">
+            <label for="iceSelect">冰塊：</label>
+            <select id="iceSelect">
+                <option value="正常冰">正常冰</option>
+                <option value="少冰">少冰</option>
+                <option value="去冰">去冰</option>
+                <option value="熱飲">熱飲</option>
+            </select>
+        </div>
+
+        <!-- 數量 -->
+        <div class="form-group">
+            <label for="quantity">數量：</label>
+            <input type="number" id="quantity" value="1" min="1" required>
+        </div>
+
+        <button type="button" onclick="calculateTotal()">計算總金額並結帳</button>
+    </form>
+
+    <div class="result-box" id="result" style="display:none;"></div>
+</div>
+
+<script>
+    // 價格表：根據「找奶茶」菜單設定價目
+    const menuPrices = {
+        "奶茶": { M: 50, L: 60 },
+        "奶綠": { M: 50, L: 60 },
+        "紅茶瑪奇朵": { M: 50, L: 60 },
+        "烏龍瑪奇朵": { M: 50, L: 60 },
+        "四季奶青": { M: 50, L: 60 },
+        "黃金烏龍奶茶": { M: 50, L: 60 },
+        "阿華田": { M: 55, L: 65 },
+        "牢大冰紅茶":{M:24,L:80}
+    };
+
+    function calculateTotal() {
+        const name = document.getElementById("userName").value.trim();
+        const phone = document.getElementById("userPhone").value.trim();
+
+        if (!name || !phone) {
+            alert("請先填寫訂購人姓名與聯絡電話！");
+            return;
+        }
+
+        const drink = document.getElementById("drinkSelect").value;
+        const size = document.getElementById("sizeSelect").value;
+        const sugar = document.getElementById("sugarSelect").value;
+        const ice = document.getElementById("iceSelect").value;
+        const qty = parseInt(document.getElementById("quantity").value);
+
+        // 取得單價並計算總額
+        const unitPrice = menuPrices[drink][size];
+        const totalPrice = unitPrice * qty;
+
+        // 判斷是否滿足 250 元外送條件
+        const canDeliver = totalPrice >= 250 ? "✅ 已達 250 元外送門檻" : "❌ 未達 250 元外送門檻（限自取）";
+
+        // 顯示結果
+        const resultDiv = document.getElementById("result");
+        resultDiv.style.display = "block";
+        resultDiv.innerHTML = `
+            <h3>訂單明細確認</h3>
+            <p><strong>訂購人：</strong> ${name}（${phone}）</p>
+            <p><strong>品項：</strong> ${drink} (${size})</p>
+            <p><strong>客製化：</strong> ${sugar} / ${ice}</p>
+            <p><strong>數量：</strong> ${qty} 杯</p>
+            <p><strong>總金額：</strong> $${totalPrice} 元</p>
+            <hr>
+            <p><strong>外送狀態：</strong> ${canDeliver}</p>
+        `;
+    }
+</script>
+</body>
